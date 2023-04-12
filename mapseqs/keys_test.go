@@ -1,4 +1,4 @@
-package maps
+package mapseqs
 
 import (
 	"testing"

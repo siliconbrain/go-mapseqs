@@ -1,4 +1,4 @@
-package maps
+package mapseqs
 
 import "github.com/siliconbrain/go-seqs/seqs"
 

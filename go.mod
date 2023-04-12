@@ -1,4 +1,4 @@
-module github.com/siliconbrain/go-maps
+module github.com/siliconbrain/go-mapseqs
 
 go 1.18
 
