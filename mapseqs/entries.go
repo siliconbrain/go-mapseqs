@@ -2,32 +2,69 @@ package mapseqs
 
 import "github.com/siliconbrain/go-seqs/seqs"
 
-func EntriesOf[M Mapping[K, V], K comparable, V any](m M) MapEntries[M, K, V] {
-	return MapEntries[M, K, V]{
-		Map: m,
+func EntriesOf[
+	Map Mapping[Key, Value],
+	Key comparable,
+	Value any,
+](
+	m Map,
+) MapEntries[
+	Map,
+	Key,
+	Value,
+	MapEntry[Key, Value],
+	func(Key, Value) MapEntry[Key, Value],
+] {
+	return EntriesOfWith(m, MapEntryFrom)
+}
+
+func EntriesOfWith[
+	Map Mapping[Key, Value],
+	Key comparable,
+	Value any,
+	Entry any,
+	Pack ~func(Key, Value) Entry,
+](m Map, pack Pack) MapEntries[Map, Key, Value, Entry, Pack] {
+	return MapEntries[Map, Key, Value, Entry, Pack]{
+		Map:  m,
+		Pack: pack,
 	}
 }
 
-type MapEntries[M Mapping[K, V], K comparable, V any] struct {
-	Map M
+type MapEntries[
+	Map Mapping[Key, Value],
+	Key comparable,
+	Value any,
+	Entry any,
+	Pack ~func(Key, Value) Entry,
+] struct {
+	Map  Map
+	Pack Pack
 }
 
-func (mes MapEntries[M, K, V]) ForEachUntil(yield func(MapEntry[K, V]) bool) {
+func (mes MapEntries[_, K, V, E, _]) ForEachUntil(yield func(E) bool) {
 	for k, v := range mes.Map {
-		if yield(MapEntry[K, V]{k, v}) {
+		if yield(mes.Pack(k, v)) {
 			return
 		}
 	}
 }
 
-func (mes MapEntries[M, K, V]) Len() int {
+func (mes MapEntries[_, _, _, _, _]) Len() int {
 	return len(mes.Map)
 }
 
-type MapEntry[K any, V any] struct {
-	Key   K
-	Value V
+func MapEntryFrom[Key, Value any](key Key, value Value) MapEntry[Key, Value] {
+	return MapEntry[Key, Value]{
+		Key:   key,
+		Value: value,
+	}
 }
 
-var _ seqs.Seq[MapEntry[string, any]] = (*MapEntries[map[string]any, string, any])(nil)
-var _ seqs.Lener = (*MapEntries[map[string]any, string, any])(nil)
+type MapEntry[Key, Value any] struct {
+	Key   Key
+	Value Value
+}
+
+var _ seqs.Seq[any] = (*MapEntries[map[string]any, string, any, any, func(string, any) any])(nil)
+var _ seqs.Lener = (*MapEntries[map[string]any, string, any, any, func(string, any) any])(nil)
