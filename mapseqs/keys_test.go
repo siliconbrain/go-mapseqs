@@ -9,13 +9,13 @@ import (
 
 func TestKeysOf(t *testing.T) {
 	t.Run("nil map", func(t *testing.T) {
-		require.Empty(t, seqs.ToSlice[string](KeysOf(map[string]any(nil))))
+		require.Empty(t, seqs.ToSlice(KeysOf(map[string]any(nil))))
 	})
 	t.Run("empty map", func(t *testing.T) {
-		require.Empty(t, seqs.ToSlice[string](KeysOf(map[string]any{})))
+		require.Empty(t, seqs.ToSlice(KeysOf(map[string]any{})))
 	})
 	t.Run("non-empty map", func(t *testing.T) {
-		require.ElementsMatch(t, []string{"foo", "bar"}, seqs.ToSlice[string](KeysOf(map[string]any{"foo": 42, "bar": false})))
+		require.ElementsMatch(t, []string{"foo", "bar"}, seqs.ToSlice(KeysOf(map[string]any{"foo": 42, "bar": false})))
 	})
 }
 
