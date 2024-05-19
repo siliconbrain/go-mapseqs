@@ -66,5 +66,31 @@ type MapEntry[Key, Value any] struct {
 	Value Value
 }
 
+func (e MapEntry[Key, Value]) Unpack() (Key, Value) {
+	return e.Key, e.Value
+}
+
 var _ seqs.Seq[any] = (*MapEntries[map[string]any, string, any, any, func(string, any) any])(nil)
 var _ seqs.Lener = (*MapEntries[map[string]any, string, any, any, func(string, any) any])(nil)
+
+func ToMap[
+	Seq seqs.Seq[Entry],
+	Entry interface{ Unpack() (Key, Value) },
+	Key comparable,
+	Value any,
+](seq Seq) map[Key]Value {
+	return ToMapWith(seq, Entry.Unpack)
+}
+
+func ToMapWith[Seq seqs.Seq[Entry], Entry any, Key comparable, Value any, Unpack ~func(Entry) (Key, Value)](seq Seq, unpack Unpack) (m map[Key]Value) {
+	if lener, ok := any(seq).(seqs.Lener); ok {
+		m = make(map[Key]Value, lener.Len())
+	} else {
+		m = make(map[Key]Value)
+	}
+	return seqs.SeededReduce(seq, m, func(m map[Key]Value, entry Entry) map[Key]Value {
+		key, value := unpack(entry)
+		m[key] = value
+		return m
+	})
+}

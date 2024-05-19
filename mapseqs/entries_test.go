@@ -26,3 +26,11 @@ func TestEntriesOf(t *testing.T) {
 			})))
 	})
 }
+
+func TestRoundTrip(t *testing.T) {
+	m := map[string]any{
+		"foo": 42,
+		"bar": false,
+	}
+	require.Equal(t, m, ToMap(EntriesOf(m)))
+}
