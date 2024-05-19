@@ -12,9 +12,9 @@ type MapKeys[M Mapping[K, V], K comparable, V any] struct {
 	Map M
 }
 
-func (mks MapKeys[M, K, V]) ForEachUntil(fn func(K) bool) {
+func (mks MapKeys[M, K, V]) ForEachUntil(yield func(K) bool) {
 	for k := range mks.Map {
-		if fn(k) {
+		if yield(k) {
 			return
 		}
 	}

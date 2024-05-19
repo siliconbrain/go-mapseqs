@@ -12,12 +12,9 @@ type MapEntries[M Mapping[K, V], K comparable, V any] struct {
 	Map M
 }
 
-func (mes MapEntries[M, K, V]) ForEachUntil(fn func(MapEntry[K, V]) bool) {
+func (mes MapEntries[M, K, V]) ForEachUntil(yield func(MapEntry[K, V]) bool) {
 	for k, v := range mes.Map {
-		if fn(MapEntry[K, V]{
-			Key:   k,
-			Value: v,
-		}) {
+		if yield(MapEntry[K, V]{k, v}) {
 			return
 		}
 	}
