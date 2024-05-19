@@ -1,6 +1,6 @@
 module github.com/siliconbrain/go-mapseqs
 
-go 1.18
+go 1.22
 
 require (
 	github.com/siliconbrain/go-seqs v0.1.0
